@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard — Adaptify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0e1a;--bg2:#0f1528;--card:#141a2e;--blue:#4f8eff;--purple:#a855f7;--green:#4ade80;--orange:#fb923c;--red:#f87171;--text:#f1f5f9;--text2:#94a3b8;--muted:#64748b;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);--r:16px;--r2:10px;--t:all .25s ease}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+    a{text-decoration:none;color:var(--blue)}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);background:var(--bg2)}
+    .logo{font-size:1.2rem;font-weight:800;color:#a78bfa}
+    .user-info{display:flex;align-items:center;gap:14px;font-size:.88rem;color:var(--text2)}
+    .btn-sm{padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:var(--t)}
+    .btn-danger{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+    .btn-danger:hover{background:rgba(248,113,113,.2)}
+    .main{max-width:1100px;margin:0 auto;padding:32px 24px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:26px;margin-bottom:24px}
+    .card h3{font-size:1.1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .btn{padding:10px 22px;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:var(--t);display:inline-flex;align-items:center;gap:6px}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
+    .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:14px;font-size:.86rem}
+    .alert-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+    .alert-ok{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:#86efac}
+
+    /* PROFILE DISPLAY */
+    .profile-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+    .profile-stat{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r2);padding:18px;text-align:center}
+    .profile-stat .val{font-size:1.8rem;font-weight:800}
+    .profile-stat .lbl{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+    .level-badge{display:inline-block;padding:6px 16px;border-radius:50px;font-size:.82rem;font-weight:700;margin-top:10px}
+    .level-beginner{background:rgba(79,142,255,.12);color:var(--blue)}
+    .level-intermediate{background:rgba(251,146,60,.12);color:var(--orange)}
+    .level-advanced{background:rgba(74,222,128,.12);color:var(--green)}
+
+    /* IQ TEST */
+    .iq-section{max-width:700px}
+    .q-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r2);padding:18px;margin-bottom:14px}
+    .q-card h4{font-size:.92rem;font-weight:700;margin-bottom:10px;color:var(--purple)}
+    .q-card p{font-size:.86rem;color:var(--text2);margin-bottom:10px;line-height:1.6}
+    .options{display:flex;flex-direction:column;gap:8px}
+    .opt{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:var(--t);font-size:.86rem}
+    .opt:hover{border-color:var(--blue);background:rgba(79,142,255,.05)}
+    .opt.selected{border-color:var(--blue);background:rgba(79,142,255,.1)}
+    .opt input{accent-color:var(--blue)}
+    .progress-bar{height:6px;background:rgba(255,255,255,.05);border-radius:3px;margin-bottom:20px;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:3px;transition:width .3s ease}
+
+    /* ASSIGNMENTS */
+    .assign-item{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:1px solid var(--border);border-radius:var(--r2);margin-bottom:10px;transition:var(--t)}
+    .assign-item:hover{border-color:rgba(79,142,255,.25)}
+    .assign-topic{font-weight:700;font-size:.94rem}
+    .assign-meta{font-size:.78rem;color:var(--muted);margin-top:3px}
+    .badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:.72rem;font-weight:600}
+    .badge-submitted{background:rgba(74,222,128,.12);color:var(--green)}
+    .badge-pending{background:rgba(251,146,60,.12);color:var(--orange)}
+
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    @media(max-width:768px){.profile-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <span class="logo">🧠 Adaptify</span>
+    <div class="user-info">
+      <span id="userName"></span>
+      <button class="btn-sm btn-danger" onclick="clearAuth();location.href='login.html'">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- PROFILE SECTION -->
+    <div class="card" id="profileSection">
+      <h3>🧬 Cognitive Profile</h3>
+      <div id="profileContent"><p style="color:var(--muted)">Loading profile...</p></div>
+    </div>
+
+    <div class="two-col">
+      <!-- IQ TEST SECTION -->
+      <div class="card" id="iqSection" style="display:none">
+        <h3>🎯 IQ Assessment</h3>
+        <p style="color:var(--text2);font-size:.86rem;margin-bottom:16px">Answer 20 questions across 4 cognitive domains. Each question has one correct answer.</p>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <div id="questionsContainer" class="iq-section"></div>
+        <div id="iqAlert"></div>
+        <button class="btn btn-primary" id="submitIqBtn" onclick="submitIQ()" style="display:none">Submit Assessment</button>
+      </div>
+
+      <!-- ASSIGNMENTS SECTION -->
+      <div class="card">
+        <h3>📝 My Assignments</h3>
+        <div id="assignmentsList"><p style="color:var(--muted)">Loading assignments...</p></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    const user = getUser();
+    if(!user || user.role !== 'student'){location.href='login.html';}
+    document.getElementById('userName').textContent = `🎓 ${user.name}`;
+
+    // IQ Questions Bank
+    const questions = [
+      // LOGICAL REASONING (5)
+      {category:'logical',q:'If all roses are flowers and some flowers fade quickly, which statement is true?',opts:['All roses fade quickly','Some roses may fade quickly','No roses fade quickly','Roses are not flowers'],answer:1},
+      {category:'logical',q:'Which number comes next: 2, 6, 18, 54, ?',opts:['108','162','148','72'],answer:1},
+      {category:'logical',q:'If A > B, B > C, and C > D, then:',opts:['D > A','A > D','B > D is unknown','A = D'],answer:1},
+      {category:'logical',q:'All mammals breathe air. Whales are mammals. Therefore:',opts:['Whales live on land','Whales breathe air','Whales are fish','Whales lay eggs'],answer:1},
+      {category:'logical',q:'If it rains, the ground gets wet. The ground is wet. Can we conclude it rained?',opts:['Yes, definitely','No, not necessarily','Only if there\'s no other water source','Yes, always'],answer:1},
+      // MEMORY (5)
+      {category:'memory',q:'Remember this sequence: 7, 3, 9, 1, 5. What was the third number?',opts:['3','9','1','7'],answer:1},
+      {category:'memory',q:'You are shown: Apple, Chair, Moon, River, Book. What was the 4th word?',opts:['Moon','River','Book','Chair'],answer:1},
+      {category:'memory',q:'Memorize: XKQWM. Which letter was in the middle?',opts:['K','Q','W','X'],answer:1},
+      {category:'memory',q:'Recall: 42, 17, 83, 56, 29. What was the sum of the first and last numbers?',opts:['71','59','83','66'],answer:0},
+      {category:'memory',q:'Remember the colors: Red, Blue, Green, Yellow, Purple. Which was second?',opts:['Red','Blue','Green','Yellow'],answer:1},
+      // PATTERN RECOGNITION (5)
+      {category:'pattern',q:'What completes the pattern: 1, 1, 2, 3, 5, 8, ?',opts:['11','13','10','15'],answer:1},
+      {category:'pattern',q:'Find the odd one out: 2, 3, 5, 7, 9, 11',opts:['2','9','3','7'],answer:1},
+      {category:'pattern',q:'What comes next: A, C, E, G, ?',opts:['H','I','J','K'],answer:1},
+      {category:'pattern',q:'Complete: 100, 81, 64, 49, ?',opts:['36','25','40','30'],answer:0},
+      {category:'pattern',q:'What is the next shape in: ○ □ △ ○ □ ?',opts:['○','□','△','◇'],answer:2},
+      // PROBLEM SOLVING (5)
+      {category:'problem_solving',q:'A farmer has 17 sheep. All but 9 die. How many are left?',opts:['8','9','17','0'],answer:1},
+      {category:'problem_solving',q:'If you have 3 apples and take away 2, how many do you have?',opts:['1','2','3','0'],answer:1},
+      {category:'problem_solving',q:'A clock shows 3:15. What is the angle between the hour and minute hands?',opts:['0°','7.5°','15°','90°'],answer:1},
+      {category:'problem_solving',q:'How many times does the digit 1 appear from 1 to 100?',opts:['11','20','21','19'],answer:2},
+      {category:'problem_solving',q:'If a shirt costs $25 after a 50% discount, what was the original price?',opts:['$37.50','$50','$75','$45'],answer:1},
+    ];
+
+    let userAnswers = {};
+
+    async function loadProfile(){
+      try{
+        const p = await API.getProfile();
+        if(p.completed){
+          renderProfile(p);
+        } else {
+          showIQTest();
+        }
+      }catch(e){
+        showIQTest();
+      }
+    }
+
+    function renderProfile(p){
+      const colors={beginner:'var(--blue)',intermediate:'var(--orange)',advanced:'var(--green)'};
+      document.getElementById('profileContent').innerHTML=`
+        <div class="profile-grid">
+          <div class="profile-stat"><div class="val" style="color:${colors[p.level]||'var(--blue)'}">${p.overall_iq.toFixed(1)}</div><div class="lbl">Overall IQ</div></div>
+          <div class="profile-stat"><div class="val" style="color:var(--blue)">${p.logical_score.toFixed(0)}%</div><div class="lbl">Logical Reasoning</div></div>
+          <div class="profile-stat"><div class="val" style="color:var(--purple)">${p.memory_score.toFixed(0)}%</div><div class="lbl">Working Memory</div></div>
+          <div class="profile-stat"><div class="val" style="color:var(--green)">${p.pattern_score.toFixed(0)}%</div><div class="lbl">Pattern Recognition</div></div>
+        </div>
+        <div class="profile-grid" style="grid-template-columns:repeat(2,1fr)">
+          <div class="profile-stat"><div class="val" style="color:var(--orange)">${p.problem_solving_score.toFixed(0)}%</div><div class="lbl">Problem Solving</div></div>
+          <div class="profile-stat" style="display:flex;flex-direction:column;align-items:center;justify-content:center"><span class="level-badge level-${p.level}">${p.level.toUpperCase()}</span><div class="lbl" style="margin-top:8px">Level</div></div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:10px" onclick="showIQTest()">🔄 Retake Assessment</button>
+      `;
+    }
+
+    function showIQTest(){
+      document.getElementById('iqSection').style.display='block';
+      const container=document.getElementById('questionsContainer');
+      container.innerHTML='';
+      userAnswers={};
+      questions.forEach((q,i)=>{
+        const catLabel={logical:'🧠 Logical Reasoning',memory:'💭 Working Memory',pattern:'🔷 Pattern Recognition',problem_solving:'⚙️ Problem Solving'}[q.category];
+        let optsHtml='';
+        q.opts.forEach((o,j)=>{
+          optsHtml+=`<label class="opt" id="opt_${i}_${j}" onclick="selectAnswer(${i},${j})"><input type="radio" name="q${i}" value="${j}"/> ${o}</label>`;
+        });
+        container.innerHTML+=`<div class="q-card"><h4>${catLabel} — Question ${(i%5)+1}</h4><p>${q.q}</p><div class="options">${optsHtml}</div></div>`;
+      });
+      // Add Interests field at the end
+      container.innerHTML += `
+        <div class="q-card" style="border-color:var(--purple)">
+          <h4>✨ Personal Interests (Optional)</h4>
+          <p>Tell us what you like (e.g., football, music, space exploration). We'll customize your assignments based on this!</p>
+          <input type="text" id="interestsInput" placeholder="Enter your interests here..." 
+                 style="width:100%;padding:12px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:.9rem"/>
+        </div>
+      `;
+      document.getElementById('submitIqBtn').style.display='inline-flex';
+      updateProgress();
+    }
+
+
+    function selectAnswer(qi,oi){
+      userAnswers[qi]=oi;
+      questions[qi].opts.forEach((_,j)=>{
+        document.getElementById(`opt_${qi}_${j}`).classList.toggle('selected',j===oi);
+      });
+      updateProgress();
+    }
+
+    function updateProgress(){
+      const p=(Object.keys(userAnswers).length/questions.length)*100;
+      document.getElementById('progressFill').style.width=p+'%';
+      document.getElementById('submitIqBtn').disabled=Object.keys(userAnswers).length<questions.length;
+    }
+
+    async function submitIQ(){
+      const scores={logical:0,memory:0,pattern:0,problem_solving:0};
+      const counts={logical:0,memory:0,pattern:0,problem_solving:0};
+      questions.forEach((q,i)=>{
+        if(!userAnswers[q.category]) {scores[q.category]=0; counts[q.category]=0;} // Initial set safety
+        counts[q.category]++;
+        // The check was flawed in source: userAnswers[i] -> key is index
+      });
+      // Re-calculate based on q index
+      Object.keys(counts).forEach(k=>counts[k]=0);
+      Object.keys(scores).forEach(k=>scores[k]=0);
+      
+      questions.forEach((q,i)=>{
+         counts[q.category]++;
+         if(userAnswers[i]===q.answer) scores[q.category]++;
+      });
+
+      const interestsVal = document.getElementById('interestsInput').value;
+      const data={
+        logical_score:(scores.logical/(counts.logical||1))*100,
+        memory_score:(scores.memory/(counts.memory||1))*100,
+        pattern_score:(scores.pattern/(counts.pattern||1))*100,
+        problem_solving_score:(scores.problem_solving/(counts.problem_solving||1))*100,
+        interests: interestsVal
+      };
+      const btn=document.getElementById('submitIqBtn');
+      btn.disabled=true;
+      btn.textContent='Submitting...';
+      try{
+        const p=await API.submitIQ(data);
+        renderProfile(p);
+        document.getElementById('iqSection').style.display='none';
+        document.getElementById('iqAlert').innerHTML='';
+      }catch(err){
+        document.getElementById('iqAlert').innerHTML=`<div class="alert alert-err">❌ ${err.message}</div>`;
+      }
+      btn.disabled=false;btn.textContent='Submit Assessment';
+    }
+
+    async function loadAssignments(){
+      try{
+        const list=await API.getMyAssignments();
+        const el=document.getElementById('assignmentsList');
+        if(!list.length){el.innerHTML='<p style="color:var(--muted);font-size:.86rem">No assignments yet. Ask your teacher to generate one!</p>';return;}
+        el.innerHTML='';
+        list.forEach(a=>{
+          let statusBadge = `<span class="badge ${a.submitted?'badge-submitted':'badge-pending'}">${a.submitted?'Submitted':'Pending'}</span>`;
+          if (a.submitted && a.grade != null) {
+              statusBadge += `<span class="badge" style="background:rgba(168,85,247,.15);color:var(--purple);margin-left:6px;border:1px solid rgba(168,85,247,.3)">Grade: ${a.grade}</span>`;
+          }
+          el.innerHTML+=`<div class="assign-item"><div><div class="assign-topic">${a.topic}</div><div class="assign-meta">${a.difficulty} · ${new Date(a.generated_at).toLocaleDateString()}</div></div><div style="display:flex;align-items:center;gap:10px">${statusBadge}<a href="assignment-viewer.html?id=${a.id}" class="btn btn-primary" style="padding:7px 14px;font-size:.8rem">View</a></div></div>`;
+        });
+      }catch(e){
+        document.getElementById('assignmentsList').innerHTML='<p style="color:var(--muted)">Error loading assignments</p>';
+      }
+    }
+
+    loadProfile();loadAssignments();
+  </script>
+</body>
+</html>
