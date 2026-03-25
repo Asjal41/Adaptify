@@ -1,0 +1,115 @@
+@baseUrl = http://localhost:8000
+
+# -----------------------------------------------------------------------------
+# AUTHENTICATION
+# -----------------------------------------------------------------------------
+
+### Register Teacher
+# @name registerTeacher
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "email": "teacher@example.com",
+    "password": "password123",
+    "role": "teacher",
+    "name": "Mr. Teacher"
+}
+
+### Login Teacher
+# @name loginTeacher
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "teacher@example.com",
+    "password": "password123"
+}
+
+@teacherToken = {{loginTeacher.response.body.access_token}}
+
+
+### Register Student
+# @name registerStudent
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "email": "student@example.com",
+    "password": "password123",
+    "role": "student",
+    "name": "Alice Student"
+}
+
+### Login Student
+# @name loginStudent
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "student@example.com",
+    "password": "password123"
+}
+
+@studentToken = {{loginStudent.response.body.access_token}}
+
+
+# -----------------------------------------------------------------------------
+# TEACHER ENDPOINTS
+# -----------------------------------------------------------------------------
+
+### Get Materials (Initially empty)
+GET {{baseUrl}}/teacher/materials
+Authorization: Bearer {{teacherToken}}
+
+
+### Upload Material (Sample text file)
+# Note: Ensure the boundaries are correctly parsed by your REST client.
+POST {{baseUrl}}/teacher/upload-material
+Authorization: Bearer {{teacherToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="python_intro.txt"
+Content-Type: text/plain
+
+This is a sample course material about Python programming.
+It covers variables, loops, and functions.
+--boundary--
+
+
+# -----------------------------------------------------------------------------
+# STUDENT ENDPOINTS
+# -----------------------------------------------------------------------------
+
+### Submit IQ (Initial Assessment)
+POST {{baseUrl}}/student/submit-iq
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+    "logical_score": 85,
+    "memory_score": 75,
+    "pattern_score": 90,
+    "problem_solving_score": 80,
+    "interests": "coding, AI, science"
+}
+
+
+# -----------------------------------------------------------------------------
+# ASSIGNMENT GENERATION
+# -----------------------------------------------------------------------------
+
+### Generate Assignment (Teacher)
+# Requires a valid student_id (e.g., 2) and material_id (e.g., 1)
+# Adjust IDs based on your database state.
+POST {{baseUrl}}/assignments/generate
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+    "student_id": 2,
+    "material_id": 1,
+    "topic": "Python Functions",
+    "difficulty": "intermediate"
+}
