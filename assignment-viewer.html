@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assignment — Adaptify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0e1a;--bg2:#0f1528;--card:#141a2e;--blue:#4f8eff;--purple:#a855f7;--green:#4ade80;--orange:#fb923c;--red:#f87171;--text:#f1f5f9;--text2:#94a3b8;--muted:#64748b;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);--r:16px;--r2:10px;--t:all .25s ease}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+    a{text-decoration:none;color:var(--blue)}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);background:var(--bg2)}
+    .logo{font-size:1.2rem;font-weight:800;color:#a78bfa}
+    .btn-sm{padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:var(--t)}
+    .btn-back{background:rgba(79,142,255,.1);color:var(--blue);border:1px solid rgba(79,142,255,.2)}
+    .btn-back:hover{background:rgba(79,142,255,.2)}
+    .main{max-width:900px;margin:0 auto;padding:32px 24px}
+
+    /* HEADER */
+    .assign-header{margin-bottom:28px}
+    .assign-header h1{font-size:1.8rem;font-weight:800;margin-bottom:8px}
+    .assign-header .meta{display:flex;gap:16px;align-items:center;font-size:.84rem;color:var(--muted)}
+    .tag{display:inline-block;padding:4px 12px;border-radius:50px;font-size:.74rem;font-weight:600}
+    .tag-diff{background:rgba(168,85,247,.12);color:var(--purple)}
+    .tag-status{background:rgba(74,222,128,.12);color:var(--green)}
+
+    .intro{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:24px;font-size:.92rem;line-height:1.7;color:var(--text2)}
+
+    /* OBJECTIVES */
+    .objectives{background:rgba(79,142,255,.05);border:1px solid rgba(79,142,255,.12);border-radius:var(--r);padding:20px;margin-bottom:24px}
+    .objectives h3{font-size:.92rem;font-weight:700;margin-bottom:10px;color:var(--blue)}
+    .objectives ul{list-style:none;padding:0}
+    .objectives li{padding:6px 0;font-size:.86rem;color:var(--text2)}
+    .objectives li::before{content:'✅ ';margin-right:6px}
+
+    /* ZONES */
+    .zone{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:18px;transition:var(--t)}
+    .zone:hover{border-color:rgba(168,85,247,.25)}
+    .zone-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .zone-num{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem}
+    .zone-title{font-size:1.05rem;font-weight:700}
+    .zone-focus{font-size:.78rem;color:var(--purple);font-weight:600;margin-top:2px}
+    .zone-desc{font-size:.88rem;color:var(--text2);line-height:1.7;margin-bottom:12px}
+    .zone h4{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+    .zone ul{list-style:decimal;padding-left:22px}
+    .zone li{font-size:.84rem;color:var(--text2);line-height:1.7;padding:3px 0}
+    
+    /* Answer Box Styles */
+    .answer-box {
+        width: 100%;
+        min-height: 80px;
+        margin-top: 10px;
+        background: rgba(0,0,0,0.3);
+        border: 1px solid var(--border2);
+        border-radius: 8px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        padding: 12px;
+        resize: vertical;
+        transition: var(--t);
+    }
+    .answer-box:focus {
+        outline: none;
+        border-color: var(--blue);
+        background: rgba(0,0,0,0.5);
+    }
+    .ref-answer { margin-bottom: 20px; }
+    .zone-answer { margin-top: 20px; min-height: 120px; border-left: 3px solid var(--purple); }
+
+    .expected{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.12);border-radius:8px;padding:12px;margin-top:12px;font-size:.84rem;color:var(--green)}
+
+    /* REFLECTION */
+    .reflection{background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.12);border-radius:var(--r);padding:20px;margin-bottom:24px}
+    .reflection h3{font-size:.92rem;font-weight:700;margin-bottom:12px;color:var(--purple)}
+    .reflection ol{padding-left:22px}
+    .reflection li{font-size:.86rem;color:var(--text2);line-height:1.7;padding:4px 0}
+
+    /* RUBRIC */
+    .rubric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+    .rubric h3{font-size:.92rem;font-weight:700;margin-bottom:12px}
+    .rubric-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+    .rubric-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+    .rubric-pts{font-size:1.3rem;font-weight:800;color:var(--blue)}
+    .rubric-name{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
+    .rubric-criteria{font-size:.78rem;color:var(--text2);margin-top:6px;line-height:1.5}
+
+    /* TEACHER NOTE */
+    .teacher-note{background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.15);border-radius:var(--r);padding:18px;margin-bottom:24px}
+    .teacher-note h3{font-size:.88rem;font-weight:700;color:var(--orange);margin-bottom:8px}
+    .teacher-note p{font-size:.86rem;color:var(--text2);line-height:1.7}
+
+    /* SUBMISSION */
+    .submit-section{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px}
+    .submit-section h3{font-size:.92rem;font-weight:700;margin-bottom:14px}
+    textarea{width:100%;min-height:120px;padding:14px;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:.9rem;font-family:inherit;resize:vertical;transition:var(--t)}
+    textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,255,.12)}
+    .btn{padding:10px 22px;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:var(--t);display:inline-flex;align-items:center;gap:6px;margin-top:12px}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
+    .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:14px;font-size:.86rem}
+    .alert-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+    .alert-ok{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:#86efac}
+    .loading{text-align:center;padding:60px;color:var(--muted);font-size:1rem}
+
+    /* CHAT AGENT */
+    .chat-btn{position:fixed;bottom:24px;right:24px;background:var(--purple);color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 8px 16px rgba(168,85,247,.3);cursor:pointer;transition:var(--t);z-index:99}
+    .chat-btn:hover{transform:scale(1.1)}
+    .chat-container{position:fixed;bottom:90px;right:24px;width:350px;height:500px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 12px 24px rgba(0,0,0,.3);display:none;flex-direction:column;overflow:hidden;z-index:99}
+    .chat-header{padding:14px 18px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:.92rem}
+    .chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+    .msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:.86rem;line-height:1.5}
+    .msg-user{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:2px}
+    .msg-bot{align-self:flex-start;background:rgba(255,255,255,.05);color:var(--text);border-bottom-left-radius:2px}
+    .chat-input-area{padding:12px;display:flex;gap:8px;border-top:1px solid var(--border)}
+    .chat-input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:20px;padding:8px 14px;color:var(--text);font-family:inherit;font-size:.86rem;outline:none}
+    .chat-send{background:none;border:none;color:var(--blue);cursor:pointer;font-weight:700;padding:0 8px}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <span class="logo">🧠 Adaptify</span>
+    <button class="btn-sm btn-back" id="backBtn" onclick="goBack()">← Back to Dashboard</button>
+  </div>
+  
+  <div class="main" id="content">
+    <div class="loading">Loading assignment...</div>
+  </div>
+
+  <!-- CHAT WIDGET -->
+  <div class="chat-btn" onclick="toggleChat()">💬</div>
+  <div class="chat-container" id="chatContainer">
+    <div class="chat-header">
+      <span>AI Tutor</span>
+      <span style="cursor:pointer;opacity:.6" onclick="toggleChat()">✕</span>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg msg-bot">Hi! I'm here to help. Need a hint or a practice problem?</div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Ask for a hint..." onkeypress="handleenter(event)">
+      <button class="chat-send" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    const user = getUser();
+    if(!user){location.href='login.html';}
+
+    function goBack(){
+      location.href = user.role==='teacher'?'teacher-dashboard.html':'student-dashboard.html';
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const assignId = params.get('id');
+    if(!assignId){document.getElementById('content').innerHTML='<div class="loading">No assignment ID provided</div>';}
+
+    async function loadAssignment(){
+      try{
+        const a = await API.getAssignment(assignId);
+        const data = JSON.parse(a.content_json);
+        renderAssignment(a, data);
+      }catch(err){
+        document.getElementById('content').innerHTML=`<div class="loading">❌ ${err.message}</div>`;
+      }
+    }
+
+    function renderAssignment(a, d){
+      let html = '';
+
+      // HEADER
+      html+=`<div class="assign-header"><h1>${d.title||a.topic}</h1><div class="meta"><span class="tag tag-diff">${a.difficulty}</span><span class="tag tag-status">${a.submitted?'✅ Submitted':'⏳ Pending'}</span><span>Generated: ${new Date(a.generated_at).toLocaleDateString()}</span></div>`;
+      
+      // Grade Display
+      if(a.grade !== null && a.grade !== undefined){
+        html += `<div style="margin-top:16px;padding:16px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:12px;display:flex;align-items:center;gap:16px">
+            <div style="font-size:2rem;font-weight:900;color:var(--green)">${a.grade}</div>
+            <div>
+                <div style="font-weight:700;color:var(--green);font-size:1.1rem">Grade</div>
+                <div style="font-size:0.95rem;color:var(--text);margin-top:4px">${a.feedback || ''}</div>
+            </div>
+         </div>`;
+      }
+      html += `</div>`;
+
+      // INTRO
+      if(d.introduction) html+=`<div class="intro">${d.introduction}</div>`;
+
+      // OBJECTIVES
+      if(d.learning_objectives && d.learning_objectives.length){
+        html+='<div class="objectives"><h3>🎯 Learning Objectives</h3><ul>';
+        d.learning_objectives.forEach(o=>html+=`<li>${o}</li>`);
+        html+='</ul></div>';
+      }
+
+      // ZONES
+      if(d.zones){
+        d.zones.forEach((z, idx)=>{
+          html+=`<div class="zone"><div class="zone-header"><div class="zone-num">${idx+1}</div><div><div class="zone-title">${z.zone_name}</div><div class="zone-focus">${z.cognitive_focus}</div></div></div><div class="zone-desc">${z.description}</div>`;
+          if(z.instructions){
+            html+='<h4>Instructions</h4><ul>';
+            if(Array.isArray(z.instructions)){
+                z.instructions.forEach(s=>html+=`<li>${s}</li>`);
+            } else {
+                html+=`<li>${z.instructions}</li>`;
+            }
+            html+='</ul>';
+          }
+          if(z.expected_output) html+=`<div class="expected">📋 <strong>Expected Output:</strong> ${z.expected_output}</div>`;
+          
+          // Zone Answer Box
+          if(user.role==='student' && !a.submitted){
+             html+=`<textarea class="answer-box zone-answer" data-label="Zone ${idx+1} (${z.zone_name})" placeholder="Type your work for Zone ${idx+1} here..."></textarea>`;
+          }
+          html+='</div>';
+        });
+      }
+
+      // REFLECTION
+      if(d.reflection_questions && d.reflection_questions.length){
+        html+='<div class="reflection"><h3>🤔 Reflection Questions</h3><ol>';
+        d.reflection_questions.forEach((q, idx)=>{
+            html+=`<li>${q}`;
+            if(user.role==='student' && !a.submitted){
+                html+=`<textarea class="answer-box ref-answer" data-label="Reflection Q${idx+1}" placeholder="Your answer..."></textarea>`;
+            }
+            html+='</li>';
+        });
+        html+='</ol></div>';
+      }
+
+      // RUBRIC
+      if(d.scoring_rubric){
+        html+='<div class="rubric"><h3>📊 Scoring Rubric</h3><div class="rubric-grid">';
+        Object.entries(d.scoring_rubric).forEach(([key,val])=>{
+          html+=`<div class="rubric-item"><div class="rubric-pts">${val.max_points}</div><div class="rubric-name">${key.replace('_',' ')}</div><div class="rubric-criteria">${val.criteria}</div></div>`;
+        });
+        html+='</div></div>';
+      }
+
+      // TEACHER NOTE
+      if(d.teacher_note){
+        html+=`<div class="teacher-note"><h3>👩‍🏫 Teacher Note</h3><p>${d.teacher_note}</p></div>`;
+      }
+
+      // SUBMISSION (students only)
+      if(user.role==='student' && !a.submitted){
+        html+=`<div class="submit-section"><h3>✅ Final Submission</h3><p style="font-size:.85rem;color:var(--text2);margin-bottom:12px">Review your answers in the boxes above, then click submit.</p><div id="submitAlert"></div><button class="btn btn-primary" id="submitBtn" onclick="submitWork()">Submit Assignment</button></div>`;
+      }
+
+      if(a.submitted && a.submission_text){
+        const title = user.role === 'teacher' ? '✅ Student Submission' : '✅ Your Submission';
+        html+=`<div class="submit-section"><h3>${title}</h3><p style="color:var(--text2);font-size:.88rem;line-height:1.7;white-space:pre-wrap">${a.submission_text}</p></div>`;
+        
+        // Add Grading Form for Teachers
+        if(user.role === 'teacher'){
+             html += `
+             <div class="submit-section" style="border-color:var(--green)">
+                <h3>📝 Teacher Grading</h3>
+                <div style="margin-bottom:12px">
+                    <label>Grade (0-100)</label>
+                    <input type="number" id="gradeInput" value="${a.grade !== null ? a.grade : ''}" placeholder="Enter score..." style="width:100px">
+                </div>
+                <div style="margin-bottom:12px">
+                    <label>Feedback</label>
+                    <textarea id="feedbackInput" rows="4" style="width:100%" placeholder="Enter detailed feedback...">${a.feedback || ''}</textarea>
+                </div>
+                <div id="gradeAlert"></div>
+                <button class="btn btn-green" onclick="saveTeacherGrade()">Save Grade & Feedback</button>
+             </div>`;
+        }
+      }
+
+      document.getElementById('content').innerHTML = html;
+    }
+
+    async function submitWork(){
+      // Aggregating all textareas
+      let fullSubmission = "";
+      const answers = document.querySelectorAll('.answer-box');
+      let hasContent = false;
+      
+      answers.forEach(el => {
+          const val = el.value.trim();
+          if(val) hasContent = true;
+          fullSubmission += `### ${el.dataset.label}\n${val || "(No answer)"}\n\n`;
+      });
+
+      if(!answers.length){
+          // Fallback if no boxes (legacy assignments?)
+          const legacyText = document.getElementById('submissionText')?.value.trim();
+          if(legacyText) { fullSubmission = legacyText; hasContent = true; }
+      }
+
+      if(!hasContent){document.getElementById('submitAlert').innerHTML='<div class="alert alert-err">❌ Please answer at least one question</div>';return;}
+      
+      const btn = document.getElementById('submitBtn');
+      btn.disabled=true;btn.textContent='Submitting...';
+      try{
+        await API.submitAssignment(assignId,{submission_text:fullSubmission});
+        document.getElementById('submitAlert').innerHTML='<div class="alert alert-ok">✅ Assignment submitted successfully!</div>';
+        setTimeout(()=>loadAssignment(),1000);
+      }catch(err){
+        document.getElementById('submitAlert').innerHTML=`<div class="alert alert-err">❌ ${err.message}</div>`;
+        btn.disabled=false;btn.textContent='Submit Assignment';
+      }
+    }
+
+    async function saveTeacherGrade(){
+        const gradeInput = document.getElementById('gradeInput');
+        const feedbackInput = document.getElementById('feedbackInput');
+        const gradeVal = parseFloat(gradeInput.value);
+
+        if(isNaN(gradeVal) || gradeVal < 0 || gradeVal > 100){
+            document.getElementById('gradeAlert').innerHTML='<div class="alert alert-err">❌ Please enter a valid grade (0-100)</div>';
+            return;
+        }
+
+        try{
+            document.getElementById('gradeAlert').innerHTML='';
+            await API.updateAssignment(assignId, { 
+                grade: gradeVal,
+                feedback: feedbackInput.value 
+            });
+            document.getElementById('gradeAlert').innerHTML='<div class="alert alert-ok">✅ Grade updated successfully!</div>';
+            setTimeout(()=>loadAssignment(), 1000);
+        }catch(e){
+            document.getElementById('gradeAlert').innerHTML=`<div class="alert alert-err">❌ ${e.message}</div>`;
+        }
+    }
+
+    // -- CHAT LOGIC --
+    function toggleChat(){
+      const c = document.getElementById('chatContainer');
+      const b = document.querySelector('.chat-btn');
+      if(c.style.display==='flex'){
+        c.style.display='none';
+        b.innerHTML='💬';
+      }else{
+        c.style.display='flex';
+        b.innerHTML='✕';
+      }
+    }
+
+    function appendMsg(txt, role, isTemp=false){
+      const d = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'msg msg-'+(role==='user'?'user':'bot') + (isTemp?' temp-msg':'');
+      div.innerText = txt;
+      d.appendChild(div);
+      d.scrollTop = d.scrollHeight;
+      return div;
+    }
+
+    async function sendMessage(){
+      const inp = document.getElementById('chatInput');
+      const text = inp.value.trim();
+      if(!text)return;
+      inp.value='';
+      appendMsg(text, 'user');
+      
+      const loadMsg = appendMsg('Thinking...', 'bot', true);
+      
+      try{
+        const res = await API.chatWithAgent({
+           assignment_id: assignId ? parseInt(assignId) : null,
+           message: text,
+           problem_context: "Viewing assignment: " + document.title
+        });
+        loadMsg.remove();
+        appendMsg(res.reply, 'bot');
+      }catch(e){
+        loadMsg.remove();
+        appendMsg('Error: '+e.message, 'bot');
+      }
+    }
+    
+    function handleenter(e){
+      if(e.key==='Enter') sendMessage();
+    }
+
+    if(assignId) loadAssignment();
+  </script>
+</body>
+</html>

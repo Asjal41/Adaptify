@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Dashboard — Adaptify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0e1a;--bg2:#0f1528;--card:#141a2e;--blue:#4f8eff;--purple:#a855f7;--green:#4ade80;--orange:#fb923c;--red:#f87171;--text:#f1f5f9;--text2:#94a3b8;--muted:#64748b;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);--r:16px;--r2:10px;--t:all .25s ease}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+    a{text-decoration:none;color:var(--blue)}
+
+    /* NAV */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);background:var(--bg2)}
+    .logo{font-size:1.2rem;font-weight:800;color:#a78bfa}
+    .user-info{display:flex;align-items:center;gap:14px;font-size:.88rem;color:var(--text2)}
+    .btn-sm{padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:var(--t)}
+    .btn-danger{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+    .btn-danger:hover{background:rgba(248,113,113,.2)}
+
+    /* LAYOUT */
+    .main{max-width:1200px;margin:0 auto;padding:32px 24px}
+    .section-title{font-size:1.4rem;font-weight:800;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+
+    /* STATS ROW */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:36px}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;text-align:center;transition:var(--t)}
+    .stat-card:hover{border-color:rgba(79,142,255,.25)}
+    .stat-val{font-size:2rem;font-weight:900;color:var(--blue)}
+    .stat-lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+
+    /* CARDS */
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:26px;margin-bottom:24px}
+    .card h3{font-size:1.1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+    /* FORMS */
+    .form-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+    label{display:block;font-size:.78rem;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+    input,select,textarea{padding:10px 14px;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:.9rem;font-family:inherit;transition:var(--t)}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,255,.12)}
+    select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+    select option{background:var(--bg2);color:var(--text)}
+    .btn{padding:10px 22px;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:var(--t);display:inline-flex;align-items:center;gap:6px}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
+    .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .btn-green{background:rgba(74,222,128,.15);color:var(--green);border:1px solid rgba(74,222,128,.2)}
+    .btn-green:hover{background:rgba(74,222,128,.25)}
+
+    /* ALERT */
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:14px;font-size:.86rem}
+    .alert-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+    .alert-ok{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:#86efac}
+
+    /* TABLE */
+    table{width:100%;border-collapse:collapse}
+    th{text-align:left;padding:10px 14px;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+    td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:.88rem;color:var(--text2)}
+    tr:hover td{background:rgba(255,255,255,.02)}
+
+    /* MATERIALS LIST */
+    .mat-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;transition:var(--t)}
+    .mat-item:hover{border-color:var(--border2)}
+    .mat-name{font-weight:600;font-size:.9rem}
+    .mat-date{font-size:.78rem;color:var(--muted)}
+
+    /* GRID */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    @media(max-width:768px){.stats{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.form-row{flex-direction:column}}
+
+    /* ASSIGNMENT PREVIEW */
+    .assign-preview{background:rgba(79,142,255,.04);border:1px solid rgba(79,142,255,.15);border-radius:var(--r);padding:22px;margin-top:16px;max-height:500px;overflow-y:auto}
+    .assign-preview h4{color:var(--blue);font-weight:700;margin-bottom:10px}
+    .zone{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px}
+    .zone-title{font-weight:700;font-size:.92rem;color:var(--purple);margin-bottom:6px}
+    .zone p,.zone li{font-size:.84rem;color:var(--text2);line-height:1.6}
+    .zone ul{list-style:disc;padding-left:20px;margin-top:6px}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <span class="logo">🧠 Adaptify</span>
+    <div class="user-info">
+      <span id="userName"></span>
+      <button class="btn-sm btn-danger" onclick="clearAuth();location.href='login.html'">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- STATS -->
+    <div class="stats" id="statsRow">
+      <div class="stat-card"><div class="stat-val" id="statStudents">—</div><div class="stat-lbl">Students</div></div>
+      <div class="stat-card"><div class="stat-val" id="statMaterials">—</div><div class="stat-lbl">Materials</div></div>
+      <div class="stat-card"><div class="stat-val" id="statAssignments">—</div><div class="stat-lbl">Assignments</div></div>
+      <div class="stat-card"><div class="stat-val" id="statAvgIQ">—</div><div class="stat-lbl">Avg IQ Score</div></div>
+    </div>
+
+    <div class="two-col">
+      <!-- LEFT COLUMN -->
+      <div>
+        <!-- UPLOAD MATERIAL -->
+        <div class="card">
+          <h3>📁 Upload Course Material</h3>
+          <div id="uploadAlert"></div>
+          <form id="uploadForm">
+            <div class="form-row">
+              <div style="flex:1"><label>File (DOCX, PDF, TXT)</label><input type="file" id="fileInput" accept=".docx,.pdf,.txt" required style="width:100%"/></div>
+              <button type="submit" class="btn btn-primary" id="uploadBtn">Upload</button>
+            </div>
+          </form>
+          <div id="materialsList" style="margin-top:16px"></div>
+        </div>
+
+        <!-- STUDENTS TABLE -->
+        <div class="card">
+          <h3>🎓 Students</h3>
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Level</th><th>IQ</th><th>Del</th></tr></thead>
+            <tbody id="studentsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <!-- GENERATE ASSIGNMENT -->
+        <div class="card">
+          <h3>🤖 Generate Assignment</h3>
+          <div id="genAlert"></div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Select Student</label>
+            <select id="studentSelect" style="width:100%"><option value="">Loading students...</option></select>
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Course Material (AI Knowledge Base — Optional)</label>
+            <select id="materialSelect" style="width:100%"><option value="">None (general)</option></select>
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Topic Override</label>
+            <input type="text" id="topicInput" placeholder="e.g., Binary Search Trees" style="width:100%"/>
+          </div>
+          <button class="btn btn-primary" id="genBtn" onclick="generateAssignment()">🤖 Generate with Groq AI</button>
+          <div id="assignmentPreview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL ASSIGNMENTS TABLE -->
+    <div class="card" style="margin-top:20px">
+      <h3>📋 Submitted Assignments</h3>
+      <table id="assignmentsTable">
+        <thead>
+          <tr>
+            <th width="25%">Topic</th>
+            <th width="15%">Student</th>
+            <th width="10%">Diff</th>
+            <th width="15%">Date</th>
+            <th width="10%">Status</th>
+            <th width="15%">Grade</th>
+            <th width="10%">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+           <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    const user = getUser();
+    if(!user || user.role !== 'teacher'){location.href='login.html';}
+    document.getElementById('userName').textContent = `👩‍🏫 ${user.name}`;
+
+    let allStudents = [], allMaterials = [];
+
+    async function loadOverview(){
+      document.getElementById('genAlert').innerHTML = ''; // Reset alert
+
+      // Check backend health
+      try {
+          const res = await fetch(`${API_BASE}/`);
+          if(!res.ok) throw new Error("Backend not healthy");
+      } catch(e) {
+          document.getElementById('genAlert').innerHTML = 
+            `<div class="alert alert-err" style="margin-bottom:20px">❌ Backend Unreachable (${API_BASE}). Ensure server is running on port 8000. Error: ${e.message}</div>`;
+      }
+
+      try{
+        const o = await API.getOverview();
+        document.getElementById('statStudents').textContent = o.total_students;
+        document.getElementById('statMaterials').textContent = o.total_materials;
+        document.getElementById('statAssignments').textContent = o.total_assignments;
+        document.getElementById('statAvgIQ').textContent = o.avg_iq || '—';
+      }catch(e){}
+      
+      loadAssignmentsList();
+    }
+    
+    async function loadAssignmentsList(){
+        try {
+            const list = await API.listAssignments();
+            const tbody = document.querySelector('#assignmentsTable tbody');
+            tbody.innerHTML = '';
+            
+            if(!list || !list.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px">No assignments found</td></tr>';
+                return;
+            }
+
+            for(const a of list){
+                // Determine Student Name
+                let sName = `Student #${a.student_id}`;
+                if(allStudents.length){
+                    const s = allStudents.find(x => x.id === a.student_id);
+                    if(s) sName = s.name;
+                }
+                
+                const statusBadge = a.submitted 
+                    ? '<span style="background:rgba(74,222,128,.1);color:var(--green);padding:3px 8px;border-radius:4px;font-size:.75rem">Submitted</span>' 
+                    : '<span style="background:rgba(251,146,60,.1);color:var(--orange);padding:3px 8px;border-radius:4px;font-size:.75rem">Pending</span>';
+                
+                let gradeHtml = '<span style="color:var(--muted);font-size:0.8rem">—</span>';
+                if(a.submitted){
+                    if(a.grade !== null && a.grade !== undefined){
+                        // already graded
+                        gradeHtml = `<span style="font-weight:bold;color:var(--green)">${a.grade}</span>`;
+                    } else {
+                        // needs grading
+                        gradeHtml = `<input type="number" id="grade-${a.id}" placeholder="Score" style="width:60px;padding:4px;font-size:0.8rem"> 
+                                     <button class="btn-sm btn-green" style="padding:4px 8px;font-size:0.75rem" onclick="saveGrade(${a.id})">Save</button>`;
+                    }
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${a.topic}</td>
+                        <td>${sName}</td>
+                        <td><span style="text-transform:capitalize">${a.difficulty}</span></td>
+                        <td>${new Date(a.generated_at).toLocaleDateString()}</td>
+                        <td>${statusBadge}</td>
+                        <td>${gradeHtml}</td>
+                        <td>
+                            <a href="assignment-viewer.html?id=${a.id}" class="btn-sm" style="background:rgba(79,142,255,.1);margin-right:4px;text-decoration:none">View</a>
+                            <button class="btn-sm btn-danger" onclick="deleteAssign(${a.id})">Del</button>
+                        </td>
+                    </tr>
+                `;
+            }
+        } catch(e) {
+            console.error("Error loading assignments table", e);
+             document.querySelector('#assignmentsTable tbody').innerHTML = '<tr><td colspan="7" style="text-align:center;color:red">Error loading list</td></tr>';
+        }
+    }
+
+    async function saveGrade(id){
+        const inp = document.getElementById(`grade-${id}`);
+        if(!inp) return;
+        const val = parseFloat(inp.value);
+        if(isNaN(val) || val < 0 || val > 100){
+            alert("Please enter a valid grade (0-100)");
+            return;
+        }
+        try{
+            await API.updateAssignment(id, { grade: val });
+            loadAssignmentsList(); // Refresh
+        }catch(e){ alert(e.message); }
+    }
+    
+    async function deleteAssign(id){
+        if(!confirm("Are you sure you want to delete this assignment?")) return;
+        try{
+            await API.deleteAssignment(id);
+            loadOverview();
+        }catch(e){ alert(e.message); }
+    }
+
+    async function loadMaterials(){
+      try{
+        allMaterials = await API.getMyMaterials();
+        const list = document.getElementById('materialsList');
+        const sel = document.getElementById('materialSelect');
+        list.innerHTML = allMaterials.length ? '' : '<p style="color:var(--muted);font-size:.85rem">No materials uploaded yet</p>';
+        sel.innerHTML = '<option value="">None (general)</option>';
+        allMaterials.forEach(m=>{
+          list.innerHTML += `<div class="mat-item"><div><div class="mat-name">📄 ${m.filename}</div><div class="mat-date">${new Date(m.upload_date).toLocaleDateString()}</div></div><button class="btn-sm btn-danger" onclick="deleteMat(${m.id})">Delete</button></div>`;
+          sel.innerHTML += `<option value="${m.id}">${m.filename}</option>`;
+        });
+      }catch(e){}
+    }
+
+    async function loadStudents(){
+      try{
+        allStudents = await API.getAllStudents();
+        const sel = document.getElementById('studentSelect');
+        const body = document.getElementById('studentsBody');
+        sel.innerHTML = '<option value="">Select a student</option>';
+        body.innerHTML = '';
+        for(const s of allStudents){
+          let lvl = '—', iq = '—';
+          try{
+            const a = await API.getStudentAnalytics(s.id);
+            if(a.profile && a.profile.completed){lvl=a.profile.level;iq=a.profile.overall_iq.toFixed(1);}
+          }catch(e){}
+          sel.innerHTML += `<option value="${s.id}">${s.name} (${lvl})</option>`;
+          body.innerHTML += `<tr>
+            <td style="color:var(--text);font-weight:600">${s.name}</td>
+            <td>${s.email}</td>
+            <td><span style="color:${lvl==='advanced'?'var(--green)':lvl==='intermediate'?'var(--orange)':'var(--blue)'}">${lvl}</span></td>
+            <td>${iq}</td>
+            <td><button class="btn-sm btn-danger" onclick="deleteStudent(${s.id})">Del</button></td>
+          </tr>`;
+        }
+        
+        // Refresh assignments list now that we have student names
+        loadAssignmentsList();
+      }catch(e){}
+    }
+
+    async function deleteStudent(id){
+      if(!confirm('Are you sure? This will delete the student and ALL their data/assignments.')) return;
+      try{
+        await API.deleteStudent(id);
+        loadStudents(); 
+        loadOverview();
+      }catch(e){ alert(e.message); }
+    }
+
+
+    async function deleteMat(id){
+      if(!confirm('Delete this material?'))return;
+      try{await API.deleteMaterial(id);loadMaterials();loadOverview();}catch(e){alert(e.message);}
+    }
+
+    // Upload
+    document.getElementById('uploadForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const btn=document.getElementById('uploadBtn');
+      btn.disabled=true;btn.textContent='Uploading...';
+      document.getElementById('uploadAlert').innerHTML='';
+      try{
+        const fd=new FormData();
+        const fileInput = document.getElementById('fileInput');
+        if(!fileInput.files.length){
+            throw new Error("Please select a file first.");
+        }
+        fd.append('file',fileInput.files[0]);
+        await API.uploadMaterial(fd);
+        document.getElementById('uploadAlert').innerHTML='<div class="alert alert-ok">✅ Material uploaded & indexed!</div>';
+        document.getElementById('fileInput').value='';
+        loadMaterials();loadOverview();
+      }catch(err){
+        document.getElementById('uploadAlert').innerHTML=`<div class="alert alert-err">❌ ${err.message}</div>`;
+      }
+      btn.disabled=false;btn.textContent='Upload';
+    });
+
+    // Generate
+    async function generateAssignment(){
+      const btn=document.getElementById('genBtn');
+      const studentId=document.getElementById('studentSelect').value;
+      const materialId=document.getElementById('materialSelect').value;
+      const topic=document.getElementById('topicInput').value.trim();
+      if(!studentId){document.getElementById('genAlert').innerHTML='<div class="alert alert-err">❌ Select a student</div>';return;}
+      if(!topic){document.getElementById('genAlert').innerHTML='<div class="alert alert-err">❌ Enter a topic</div>';return;}
+
+      btn.disabled=true;btn.textContent='⏳ Generating with AI...';
+      document.getElementById('genAlert').innerHTML='';
+      document.getElementById('assignmentPreview').innerHTML='';
+      try{
+        const body={student_id:parseInt(studentId),topic};
+        if(materialId)body.material_id=parseInt(materialId);
+        const a=await API.generateAssignment(body);
+        const data=JSON.parse(a.content_json);
+        renderPreview(data);
+        document.getElementById('genAlert').innerHTML='<div class="alert alert-ok">✅ Assignment generated successfully!</div>';
+        loadOverview();
+      }catch(err){
+        document.getElementById('genAlert').innerHTML=`<div class="alert alert-err">❌ AI generation failed: ${err.message}</div>`;
+      }
+      btn.disabled=false;btn.textContent='🤖 Generate with Groq AI';
+    }
+
+    function renderPreview(d){
+      let html=`<div class="assign-preview"><h4>📝 ${d.title||'Assignment'}</h4><p style="color:var(--text2);font-size:.86rem;margin-bottom:12px">${d.introduction||''}</p>`;
+      if(d.learning_objectives){html+='<p style="font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:6px">Learning Objectives:</p><ul style="list-style:disc;padding-left:20px;margin-bottom:14px">';d.learning_objectives.forEach(o=>html+=`<li style="font-size:.82rem;color:var(--text2)">${o}</li>`);html+='</ul>';}
+      if(d.zones){
+        d.zones.forEach((z, idx)=>{
+          html+=`<div class="zone"><div class="zone-title">Zone ${idx+1}: ${z.zone_name}</div><p><strong>Focus:</strong> ${z.cognitive_focus}</p><p>${z.description}</p>`;
+          if(z.instructions){
+            if(Array.isArray(z.instructions)){
+              html+='<ul>';
+              z.instructions.forEach(i=>html+=`<li style="margin-bottom:4px">${i}</li>`);
+              html+='</ul>';
+            } else {
+              // Fallback if instructions is a string
+              html+=`<p>${z.instructions}</p>`; 
+            }
+          }
+          html+=`<p style="margin-top:6px"><strong>Expected Output:</strong> ${z.expected_output}</p>
+          <div style="margin-top:10px;padding:10px;border:1px dashed var(--border);border-radius:6px;color:var(--muted);font-size:.8rem;background:rgba(0,0,0,0.2)">[Student Answer Box for Zone ${idx+1}]</div>
+          </div>`;
+        });
+      }
+      if(d.reflection_questions){
+          html+='<p style="font-size:.82rem;font-weight:600;color:var(--text);margin:12px 0 6px">Reflection Questions:</p><ul style="list-style:decimal;padding-left:20px">';
+          d.reflection_questions.forEach(q=>{
+              html+=`<li style="font-size:.82rem;color:var(--text2);margin-bottom:14px">${q}<br>
+              <textarea style="width:100%;height:50px;margin-top:6px;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:0.85rem;padding:8px;resize:vertical" placeholder="Enter answer..."></textarea>
+              </li>`;
+          });
+          html+='</ul>';
+      }
+      if(d.teacher_note){html+=`<p style="margin-top:14px;padding:10px;background:rgba(168,85,247,.08);border-radius:6px;font-size:.82rem;color:var(--purple)"><strong>Teacher Note:</strong> ${d.teacher_note}</p>`;}
+      html+='</div>';
+      document.getElementById('assignmentPreview').innerHTML=html;
+    }
+
+    loadOverview();loadMaterials();loadStudents();
+  </script>
+</body>
+</html>

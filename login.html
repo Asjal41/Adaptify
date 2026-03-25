@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — Adaptify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0e1a;--bg2:#0f1528;--card:#141a2e;--blue:#4f8eff;--purple:#a855f7;--green:#4ade80;--text:#f1f5f9;--text2:#94a3b8;--muted:#64748b;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--r:16px;--r2:10px;--t:all 0.25s ease}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+    a{text-decoration:none;color:var(--blue)}a:hover{text-decoration:underline}
+    .left{flex:1;background:radial-gradient(ellipse 120% 100% at 50% 50%,rgba(79,142,255,.12) 0%,var(--bg) 70%);display:flex;align-items:center;justify-content:center;padding:40px}
+    .right{width:480px;background:var(--bg2);border-left:1px solid var(--border);display:flex;align-items:center;justify-content:center;padding:48px 40px}
+    .panel{width:100%;max-width:370px}
+    .logo{font-size:1.3rem;font-weight:800;color:#a78bfa;margin-bottom:28px;display:block}
+    h1{font-size:1.8rem;font-weight:800;margin-bottom:6px}
+    .sub{color:var(--text2);font-size:.9rem;margin-bottom:26px}
+    .form-group{margin-bottom:18px}
+    label{display:block;font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em}
+    input{width:100%;padding:12px 15px;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:var(--r2);color:var(--text);font-size:.94rem;transition:var(--t);font-family:inherit}
+    input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,255,.15);background:rgba(79,142,255,.04)}
+    input::placeholder{color:var(--muted)}
+    .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:var(--r2);font-size:.95rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:var(--t)}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
+    .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .alert{padding:12px 16px;border-radius:var(--r2);margin-bottom:14px;font-size:.88rem}
+    .err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+    .divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.78rem;margin:18px 0}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+    .left-content h2{font-size:2.3rem;font-weight:800;line-height:1.2;margin-bottom:14px}
+    .grad-text{color:#a78bfa}
+    .left-content p{color:var(--text2);line-height:1.8;font-size:1rem}
+    .stat-row{display:flex;gap:16px;margin-top:36px}
+    .stat{flex:1;background:linear-gradient(145deg,rgba(79,142,255,.08),rgba(168,85,247,.04));border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center}
+    .stat-val{font-size:1.5rem;font-weight:800;color:var(--blue)}
+    .stat-lbl{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .fade{animation:fadeIn .35s ease forwards}
+    @media(max-width:768px){.left{display:none}.right{width:100%;border-left:none}}
+  </style>
+</head>
+<body>
+  <div class="left">
+    <div class="left-content fade">
+      <h2>Welcome back to <span class="grad-text">Adaptify</span></h2>
+      <p>Your personalized learning platform that adapts to each student's unique cognitive profile — powered by Groq AI and Cognitive Learning Theory.</p>
+      <div class="stat-row">
+        <div class="stat"><div class="stat-val">RAG</div><div class="stat-lbl">Knowledge Retrieval</div></div>
+        <div class="stat"><div class="stat-val">CLT</div><div class="stat-lbl">Learning Theory</div></div>
+        <div class="stat"><div class="stat-val">AI</div><div class="stat-lbl">Groq Powered</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="panel fade">
+      <span class="logo">🧠 Adaptify</span>
+      <h1>Sign In</h1>
+      <p class="sub">Enter your credentials to continue</p>
+      <div id="alert"></div>
+      <form id="form">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="you@example.com" required/>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="pw" placeholder="Your password" required/>
+        </div>
+        <button type="submit" class="btn btn-primary" id="btn">Sign In</button>
+      </form>
+      <div class="divider">OR</div>
+      <p style="text-align:center;font-size:.87rem;color:var(--text2);">No account? <a href="register.html">Register here</a></p>
+      <p style="text-align:center;margin-top:10px;font-size:.87rem;"><a href="index.html">← Back to Home</a></p>
+    </div>
+  </div>
+  <script src="api.js"></script>
+  <script>
+    const u = getUser();
+    if(u) location.href = u.role==='teacher'?'teacher-dashboard.html':'student-dashboard.html';
+    document.getElementById('form').addEventListener('submit', async e=>{
+      e.preventDefault();
+      const btn=document.getElementById('btn');
+      btn.disabled=true; btn.textContent='Signing in...';
+      document.getElementById('alert').innerHTML='';
+      try{
+        const d=await API.login({email:document.getElementById('email').value,password:document.getElementById('pw').value});
+        setAuth(d);
+        location.href=d.role==='teacher'?'teacher-dashboard.html':'student-dashboard.html';
+      }catch(err){
+        document.getElementById('alert').innerHTML=`<div class="alert err">❌ ${err.message}</div>`;
+        btn.disabled=false; btn.textContent='Sign In';
+      }
+    });
+  </script>
+</body>
+</html>
